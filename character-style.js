@@ -1,9 +1,7 @@
 // Authored protagonist sprite renderer.
 // Canonical drawings: assets/sprites/nico_poses.png and vera_poses.png.
 // Runtime sheets are 512x512, arranged as a 4x4 grid of 128x128 poses.
-// We intentionally use high-quality downscaling: the hand-drawn source already
-// contains the desired edge character, so forcing nearest-neighbour here only
-// creates artificial blockiness.
+// The game renders at 854x480 and protagonist frames are drawn 1:1 at 128px.
 
 (() => {
   const sheets = { m: new Image(), f: new Image() };
@@ -11,8 +9,8 @@
   sheets.f.src = 'assets/sprites/vera_poses.png';
 
   const CELL = 128;
-  const DRAW = 96;
-  const ANCHOR_Y = 72;
+  const DRAW = 128;
+  const ANCHOR_Y = 96;
 
   const POSE = Object.freeze({
     IDLE: 0,
@@ -67,8 +65,7 @@
     const dy = Math.round(py - ANCHOR_Y);
 
     ctx.save();
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
+    ctx.imageSmoothingEnabled = false;
 
     if (flipLeft) {
       ctx.translate(Math.round(px) * 2, 0);
@@ -87,7 +84,7 @@
     drawSheetPose(img, pose, px, py, shouldFlipLeft(step));
 
     if (selected && blink(now, 330)) {
-      rect(Math.round(px - 3), Math.round(py - 78), 6, 8, '#ffd400');
+      rect(Math.round(px - 4), Math.round(py - 106), 8, 12, '#ffd400');
     }
 
     void backpack;
