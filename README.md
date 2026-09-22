@@ -1,27 +1,42 @@
 # El Proyecto Definitivo
 
-RPG web 2D estático preparado para GitHub Pages.
+RPG 2D urbano y surrealista, ejecutado completamente en el navegador y publicado con GitHub Pages.
 
 ## Jugar
 
 - WASD / flechas: movimiento
-- E / Enter: interactuar
-- 1: atacar durante combate
-- 2: usar poción
-- Guardado: `localStorage` del navegador
+- E / Enter: interactuar / confirmar
+- Nueva partida: reinicia el registro del residente
+- Estado persistente: `localStorage`
 
-## Publicar con GitHub Pages
+## Stack
 
-En GitHub: **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**.
+- HTML + CSS + JavaScript
+- Canvas 2D
+- GitHub Pages
+- sin framework ni backend
+- sprites PNG reales para Nico y Vera
+- render nearest-neighbor, sin antialiasing
 
-La URL será:
+## Sprites protagonistas
+
+- `assets/sprites/nico_poses.png`
+- `assets/sprites/vera_poses.png`
+
+Ambos son sheets 4×4 de 16 poses. El renderer está en `character-style.js` y usa exclusivamente los dibujos aprobados; no reconstruye los protagonistas con primitivas.
+
+La dirección visual completa está documentada en `docs/ART_STYLE.md`.
+
+## Estructura principal
+
+- `index.html`: shell del juego
+- `style.css`: presentación del canvas y terminal
+- `game.js`: mundo, movimiento, interacción y prólogo
+- `selection-fix.js`: selección diegética del residente
+- `character-style.js`: renderer de sprites de protagonista
+- `assets/sprites/`: arte de runtime
+- `docs/ART_STYLE.md`: contrato de dirección de arte
+
+## GitHub Pages
 
 `https://reallotex.github.io/elproyectodefinitivo/`
-
-## Estructura
-
-- `index.html`: interfaz
-- `style.css`: estilos
-- `game.js`: mapa, movimiento, NPC, combate, inventario y guardado
-
-No requiere servidor, base de datos ni dependencias externas.
