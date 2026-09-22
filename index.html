@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>El Proyecto Definitivo</title>
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <main class="stage-shell">
@@ -26,11 +26,38 @@
       <span>WASD / FLECHAS · E / ENTER</span>
       <button id="resetBtn" type="button">NUEVA PARTIDA</button>
     </div>
+
+    <section id="mobileControls" class="mobile-controls" aria-label="Controles táctiles">
+      <div class="sp-shoulders">
+        <button class="sp-shoulder" type="button" data-key="q" aria-label="Botón L">L</button>
+        <button class="sp-shoulder" type="button" data-key="r" aria-label="Botón R">R</button>
+      </div>
+
+      <div class="sp-controls-row">
+        <div class="sp-dpad" aria-label="Cruceta">
+          <button class="dpad-button dpad-up" type="button" data-hold="ArrowUp" aria-label="Arriba">▲</button>
+          <button class="dpad-button dpad-left" type="button" data-hold="ArrowLeft" aria-label="Izquierda">◀</button>
+          <span class="dpad-center" aria-hidden="true"></span>
+          <button class="dpad-button dpad-right" type="button" data-hold="ArrowRight" aria-label="Derecha">▶</button>
+          <button class="dpad-button dpad-down" type="button" data-hold="ArrowDown" aria-label="Abajo">▼</button>
+        </div>
+
+        <div class="sp-start-wrap">
+          <button class="sp-start" type="button" data-key="Enter">START</button>
+        </div>
+
+        <div class="sp-ab" aria-label="Botones A y B">
+          <button class="sp-face sp-b" type="button" data-key=" " aria-label="Botón B">B</button>
+          <button class="sp-face sp-a" type="button" data-key="e" aria-label="Botón A">A</button>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <script src="game.js?v=6"></script>
-  <script src="selection-fix.js?v=6"></script>
-  <script src="character-style.js?v=6"></script>
-  <script src="layout-854.js?v=6"></script>
+  <script src="game.js?v=7"></script>
+  <script src="selection-fix.js?v=7"></script>
+  <script src="character-style.js?v=7"></script>
+  <script src="layout-854.js?v=7"></script>
+  <script src="mobile-controls.js?v=1"></script>
 </body>
 </html>
