@@ -23,7 +23,7 @@ RPG 2D urbano y surrealista, ejecutado completamente en el navegador y publicado
 - `assets/sprites/nico_poses.png`
 - `assets/sprites/vera_poses.png`
 
-Ambos son sheets 4×4 de 16 poses. Los assets de runtime son 512×512, con celdas de 128×128. El renderer está en `character-style.js` y usa exclusivamente los dibujos aprobados; no reconstruye los protagonistas con primitivas.
+Ambos son sheets 4×4 de 16 poses. Los assets de runtime son 256×256, con celdas de 64×64. El renderer está en `character-style.js` y usa exclusivamente los dibujos aprobados; no reconstruye los protagonistas con primitivas.
 
 La dirección visual completa está documentada en `docs/ART_STYLE.md`.
 
