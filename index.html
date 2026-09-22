@@ -14,8 +14,20 @@
     </header>
 
     <section class="game-wrap">
-      <canvas id="game" width="768" height="480" aria-label="Juego RPG"></canvas>
-      <aside>
+      <div class="canvas-wrap">
+        <canvas id="game" width="768" height="480" aria-label="Juego RPG"></canvas>
+        <form id="nameEntry" class="name-entry hidden" autocomplete="off">
+          <div>NOMBRE DEL RESIDENTE:</div>
+          <div class="terminal-input-row">
+            <span>&gt;</span>
+            <input id="residentName" maxlength="12" spellcheck="false" />
+            <span class="caret">_</span>
+          </div>
+          <div class="terminal-help">ENTER — CONFIRMAR</div>
+        </form>
+      </div>
+
+      <aside id="gameAside">
         <h2>Controles</h2>
         <p>WASD / Flechas: mover</p>
         <p>E / Enter: interactuar</p>
