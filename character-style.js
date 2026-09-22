@@ -1,15 +1,18 @@
-// Real protagonist sprite renderer.
-// Source of truth: assets/sprites/nico_poses.png and vera_poses.png.
-// Each sheet is 128x128, arranged as a 4x4 grid of 32x32 poses.
-// Runtime rendering uses integer 2x scaling and disables interpolation.
+// Authored protagonist sprite renderer.
+// Canonical drawings: assets/sprites/nico_poses.png and vera_poses.png.
+// Runtime sheets are 512x512, arranged as a 4x4 grid of 128x128 poses.
+// We intentionally use high-quality downscaling: the hand-drawn source already
+// contains the desired edge character, so forcing nearest-neighbour here only
+// creates artificial blockiness.
 
 (() => {
   const sheets = { m: new Image(), f: new Image() };
   sheets.m.src = 'assets/sprites/nico_poses.png';
   sheets.f.src = 'assets/sprites/vera_poses.png';
 
-  const CELL = 32;
-  const DRAW = 64;
+  const CELL = 128;
+  const DRAW = 96;
+  const ANCHOR_Y = 72;
 
   const POSE = Object.freeze({
     IDLE: 0,
@@ -39,36 +42,41 @@
 
   function pickPose(now, { selected = false, step = 0 } = {}) {
     if (step) {
-      // Alternate the supplied neutral/walk/run drawings instead of
-      // synthesizing body movement procedurally.
-      const frame = Math.floor(now / 130) % 4;
-      return frame === 0 ? POSE.IDLE : frame === 2 ? POSE.RUN : POSE.WALK;
+      const frame = Math.floor(now / 135) % 4;
+      return frame === 0 || frame === 2 ? POSE.WALK : POSE.RUN;
     }
-
     if (selected) {
-      return Math.floor(now / 520) % 2 ? POSE.HANDS_HIPS : POSE.IDLE;
+      return Math.floor(now / 650) % 2 ? POSE.HANDS_HIPS : POSE.IDLE;
     }
-
-    // Small diegetic idle variation using only authored poses.
-    const idle = Math.floor(now / 1500) % 10;
-    if (idle === 8) return POSE.THINK;
-    if (idle === 9) return POSE.RELAXED;
     return POSE.IDLE;
   }
 
-  function drawSheetPose(img, index, px, py) {
+  function shouldFlipLeft(step) {
+    if (!step) return false;
+    try {
+      return typeof game !== 'undefined' && game.player && game.player.facingX < 0;
+    } catch {
+      return false;
+    }
+  }
+
+  function drawSheetPose(img, index, px, py, flipLeft) {
     if (!img.complete || !img.naturalWidth) return false;
     const { sx, sy } = sourceRect(index);
+    const dx = Math.round(px - DRAW / 2);
+    const dy = Math.round(py - ANCHOR_Y);
 
     ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(
-      img,
-      sx, sy, CELL, CELL,
-      Math.round(px - DRAW / 2),
-      Math.round(py - 45),
-      DRAW, DRAW
-    );
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    if (flipLeft) {
+      ctx.translate(Math.round(px) * 2, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, sx, sy, CELL, CELL, dx, dy, DRAW, DRAW);
+    } else {
+      ctx.drawImage(img, sx, sy, CELL, CELL, dx, dy, DRAW, DRAW);
+    }
     ctx.restore();
     return true;
   }
@@ -76,17 +84,12 @@
   drawResident = function(px, py, gender, now, { backpack = true, selected = false, step = 0 } = {}) {
     const img = sheets[gender === 'f' ? 'f' : 'm'];
     const pose = pickPose(now, { selected, step });
+    drawSheetPose(img, pose, px, py, shouldFlipLeft(step));
 
-    drawSheetPose(img, pose, px, py);
-
-    // Selection cursor remains UI, not part of the character art.
     if (selected && blink(now, 330)) {
-      rect(Math.round(px - 3), Math.round(py - 52), 6, 8, '#ffd400');
+      rect(Math.round(px - 3), Math.round(py - 78), 6, 8, '#ffd400');
     }
 
-    // `backpack` remains in the API because existing scenes pass it.
-    // The protagonist body is NEVER rebuilt with procedural primitives.
-    // Backpack/keyboard will become authored sprite layers in the same style.
     void backpack;
   };
 
