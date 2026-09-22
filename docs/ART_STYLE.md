@@ -13,19 +13,27 @@ Cada archivo es un spritesheet de **4 × 4** con **16 poses**. Los assets de run
 
 Los sprites enviados por el autor son la referencia visual de mayor autoridad. Si el código, una descripción textual o un asset futuro entra en conflicto con ellos, prevalece el sprite aprobado.
 
+## Resolución y composición
+
+- Resolución interna objetivo: **854 × 480 px**.
+- El viewport del juego no lleva marco, borde ni sombra decorativa exterior.
+- El canvas se presenta con `image-rendering: pixelated` / `crisp-edges`.
+- `ctx.imageSmoothingEnabled = false` para sprites y rendering 2D.
+- Los protagonistas se dibujan normalmente a **128 px de alto**, usando la celda 128 × 128 a escala 1:1.
+- Evitar personajes diminutos rodeados de demasiado espacio vacío.
+- La composición debe recordar a juegos 2D de GBA: sprites grandes y legibles, fondos densos y la acción ocupando una porción importante del cuadro.
+
+La referencia compositiva no implica copiar interfaces concretas de otros juegos; importa la relación entre tamaño de sprite, escenario y viewport.
+
 ## Stack gráfico
 
 - Canvas 2D.
 - Sprites PNG con transparencia.
 - Personajes mediante `drawImage`, recortando la celda correspondiente del spritesheet.
-- El personaje se muestra normalmente a ~96 px de caja de dibujo dentro del canvas.
-- Al reducir desde 128 px a tamaño de juego se usa filtrado de alta calidad (`imageSmoothingEnabled = true`).
-- **No** aplicar `image-rendering: pixelated` al canvas completo.
-- La sensación GBA debe venir de la composición, escala, paleta, cámara y assets, no de forzar bloques artificiales sobre toda la imagen.
+- Sin suavizado ni antialiasing añadido por el runtime.
+- Escalado entero siempre que sea posible.
 - Prohibido reconstruir el cuerpo del protagonista usando `fillRect`, polígonos, vectores o un renderer procedural.
 - Las animaciones se construyen cambiando entre dibujos/poses reales.
-
-El objetivo técnico es conservar el trazo original de las ilustraciones y lograr una presentación compacta tipo RPG de GBA sin destruirlo mediante reescalado nearest-neighbour excesivo.
 
 ## Mapa de poses
 
@@ -57,14 +65,14 @@ Reglas obligatorias para personajes y sprites:
 - dibujo 2D deliberadamente hecho a mano;
 - estética MS Paint / sprite crudo de PC de fines de los 90 y 2000;
 - bordes negros puros (`#000000`), gruesos e irregulares;
+- **sin antialiasing**;
+- píxeles y escalones visibles en diagonales y curvas;
 - pocos colores planos, saturados y claramente separados;
 - proporciones caricaturescas y siluetas imperfectas;
 - asimetrías deliberadas;
 - evitar sombreado suave, gradientes, iluminación 3D o acabado vectorial limpio;
 - ojos y rasgos faciales simples, expresivos y ligeramente torcidos;
 - ropa urbana cotidiana, amplia y poco heroica.
-
-Importante: “sin antialiasing” describe el lenguaje del **dibujo fuente**. No significa que el navegador deba aplicar nearest-neighbour cuando reduce una ilustración de mayor resolución. El reescalado no debe volver visible una cuadrícula que no existe en el arte original.
 
 ## Protagonistas
 
@@ -95,4 +103,4 @@ No volver a dibujarlos con primitivas limpias encima del personaje salvo como pl
 
 Todo NPC, prop y escenario nuevo debe poder convivir visualmente con Nico y Vera sin parecer proveniente de otro juego.
 
-Si algo se ve demasiado limpio, vectorial, simétrico o incompatible con el trazo de los protagonistas, está fuera de estilo.
+Si algo se ve demasiado limpio, vectorial, simétrico, suavizado o incompatible con el trazo de los protagonistas, está fuera de estilo.
