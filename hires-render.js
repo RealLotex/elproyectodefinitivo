@@ -1,6 +1,7 @@
 // Responsive HiDPI presentation layer.
-// 854x480 remains only the logical design coordinate system.
-// The real canvas backing store always matches the available screen area * devicePixelRatio.
+// 854x480 is the logical world coordinate system only.
+// The stage is always filled using a single uniform scale (cover), so the game
+// is never stretched. Any excess is cropped symmetrically.
 
 (() => {
   const DESIGN_W = 854;
@@ -12,7 +13,7 @@
     const bounds = stage.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
     const physicalW = Math.max(1, Math.round(bounds.width * dpr));
     const physicalH = Math.max(1, Math.round(bounds.height * dpr));
 
@@ -21,21 +22,45 @@
       canvas.height = physicalH;
     }
 
-    // Existing world code keeps using the 854x480 design space, while the
-    // browser rasterizes it directly into the device's full-resolution buffer.
-    ctx.setTransform(physicalW / DESIGN_W, 0, 0, physicalH / DESIGN_H, 0, 0);
+    // COVER, never stretch: one scale for both axes.
+    const scale = Math.max(physicalW / DESIGN_W, physicalH / DESIGN_H);
+    const renderedW = DESIGN_W * scale;
+    const renderedH = DESIGN_H * scale;
+    const offsetX = (physicalW - renderedW) / 2;
+    const offsetY = (physicalH - renderedH) / 2;
+
+    ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    window.RENDER_METRICS = Object.freeze({
+    // Logical coordinates that are actually visible after the crop.
+    const left = -offsetX / scale;
+    const top = -offsetY / scale;
+    const visibleWidth = physicalW / scale;
+    const visibleHeight = physicalH / scale;
+
+    window.RENDER_METRICS = {
       designWidth: DESIGN_W,
       designHeight: DESIGN_H,
       cssWidth: bounds.width,
       cssHeight: bounds.height,
       physicalWidth: physicalW,
       physicalHeight: physicalH,
-      dpr
-    });
+      dpr,
+      scale,
+      offsetX,
+      offsetY,
+      visibleRect: {
+        left,
+        top,
+        right: left + visibleWidth,
+        bottom: top + visibleHeight,
+        width: visibleWidth,
+        height: visibleHeight,
+        cx: left + visibleWidth / 2,
+        cy: top + visibleHeight / 2
+      }
+    };
   }
 
   const observer = new ResizeObserver(resizeCanvas);
