@@ -16,7 +16,7 @@
     <section class="game-wrap">
       <div class="canvas-wrap">
         <canvas id="game" width="768" height="480" aria-label="Juego RPG"></canvas>
-        <form id="nameEntry" class="name-entry hidden" autocomplete="off">
+        <form id="nameEntry" class="name-entry hidden" autocomplete="off" onkeydown="event.stopPropagation()">
           <div>NOMBRE DEL RESIDENTE:</div>
           <div class="terminal-input-row">
             <span>&gt;</span>
