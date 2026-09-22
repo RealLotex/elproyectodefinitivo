@@ -7,41 +7,25 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="shell">
-    <header>
-      <h1>El Proyecto Definitivo</h1>
-      <div id="stats"></div>
-    </header>
+  <main class="stage-shell">
+    <div id="stage" class="stage">
+      <canvas id="game" width="768" height="480" aria-label="RPG 2D"></canvas>
 
-    <section class="game-wrap">
-      <div class="canvas-wrap">
-        <canvas id="game" width="768" height="480" aria-label="Juego RPG"></canvas>
-        <form id="nameEntry" class="name-entry hidden" autocomplete="off" onkeydown="event.stopPropagation()">
-          <div>NOMBRE DEL RESIDENTE:</div>
-          <div class="terminal-input-row">
-            <span>&gt;</span>
-            <input id="residentName" maxlength="12" spellcheck="false" />
-            <span class="caret">_</span>
-          </div>
-          <div class="terminal-help">ENTER — CONFIRMAR</div>
-        </form>
-      </div>
+      <form id="nameEntry" class="terminal-entry hidden" autocomplete="off" onkeydown="event.stopPropagation()">
+        <div>NOMBRE DEL RESIDENTE:</div>
+        <div class="terminal-row">
+          <span>&gt;</span>
+          <input id="residentName" maxlength="12" spellcheck="false" />
+          <span class="caret">_</span>
+        </div>
+        <div class="terminal-help">ENTER — CONFIRMAR</div>
+      </form>
+    </div>
 
-      <aside id="gameAside">
-        <h2>Controles</h2>
-        <p>WASD / Flechas: mover</p>
-        <p>E / Enter: interactuar</p>
-        <p>1: atacar</p>
-        <p>2: poción</p>
-        <button id="saveBtn">Guardar</button>
-        <button id="resetBtn">Nueva partida</button>
-        <h2>Inventario</h2>
-        <ul id="inventory"></ul>
-      </aside>
-    </section>
-
-    <section id="dialogue" class="panel hidden"></section>
-    <section id="combat" class="panel hidden"></section>
+    <div class="underbar">
+      <span>WASD / FLECHAS · E / ENTER</span>
+      <button id="resetBtn" type="button">NUEVA PARTIDA</button>
+    </div>
   </main>
 
   <script src="game.js"></script>
