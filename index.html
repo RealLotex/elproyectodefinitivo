@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>El Proyecto Definitivo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <h1>El Proyecto Definitivo</h1>
+      <div id="stats"></div>
+    </header>
+
+    <section class="game-wrap">
+      <canvas id="game" width="768" height="480" aria-label="Juego RPG"></canvas>
+      <aside>
+        <h2>Controles</h2>
+        <p>WASD / Flechas: mover</p>
+        <p>E / Enter: interactuar</p>
+        <p>1: atacar</p>
+        <p>2: poción</p>
+        <button id="saveBtn">Guardar</button>
+        <button id="resetBtn">Nueva partida</button>
+        <h2>Inventario</h2>
+        <ul id="inventory"></ul>
+      </aside>
+    </section>
+
+    <section id="dialogue" class="panel hidden"></section>
+    <section id="combat" class="panel hidden"></section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
