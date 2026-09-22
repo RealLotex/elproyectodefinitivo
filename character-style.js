@@ -1,16 +1,11 @@
-// Authored protagonist sprite renderer.
-// Canonical drawings: assets/sprites/nico_poses.png and vera_poses.png.
-// Each sheet is interpreted as a 4x4 grid. Cell size is detected at runtime.
-// Protagonists are rendered at 128px high with no smoothing.
+// High-quality protagonist renderer.
+// Canonical sheets committed by the author: boy.png and fem.png.
+// Each sheet is a 4x4 grid. Frames are drawn from the original asset at native cell size.
 
 (() => {
   const sheets = { m: new Image(), f: new Image() };
-  sheets.m.src = 'assets/sprites/nico_poses.png?v=6';
-  sheets.f.src = 'assets/sprites/vera_poses.png?v=6';
-
-  const DRAW_W = 128;
-  const DRAW_H = 128;
-  const ANCHOR_Y = 96;
+  sheets.m.src = 'boy.png?v=8';
+  sheets.f.src = 'fem.png?v=8';
 
   const POSE = Object.freeze({
     IDLE: 0, WALK: 1, RUN: 2, JUMP: 3,
@@ -20,8 +15,8 @@
   });
 
   function pickPose(now, { selected = false, step = 0 } = {}) {
-    if (step) return Math.floor(now / 150) % 2 ? POSE.WALK : POSE.RUN;
-    if (selected) return Math.floor(now / 650) % 2 ? POSE.HANDS_HIPS : POSE.IDLE;
+    if (step) return Math.floor(now / 145) % 2 ? POSE.WALK : POSE.RUN;
+    if (selected) return Math.floor(now / 700) % 2 ? POSE.HANDS_HIPS : POSE.IDLE;
     return POSE.IDLE;
   }
 
@@ -38,33 +33,45 @@
     const cellH = img.naturalHeight / 4;
     const sx = (index % 4) * cellW;
     const sy = Math.floor(index / 4) * cellH;
-    const dx = Math.round(px - DRAW_W / 2);
-    const dy = Math.round(py - ANCHOR_Y);
+
+    // Native frame dimensions: no runtime downsampling.
+    const drawW = cellW;
+    const drawH = cellH;
+    const anchorY = drawH * 0.78;
+    const dx = px - drawW / 2;
+    const dy = py - anchorY;
 
     ctx.save();
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     if (flipLeft) {
-      ctx.translate(Math.round(px) * 2, 0);
+      ctx.translate(px * 2, 0);
       ctx.scale(-1, 1);
     }
 
-    ctx.drawImage(img, sx, sy, cellW, cellH, dx, dy, DRAW_W, DRAW_H);
+    ctx.drawImage(img, sx, sy, cellW, cellH, dx, dy, drawW, drawH);
     ctx.restore();
     return true;
   }
 
   drawResident = function(px, py, gender, now, { backpack = true, selected = false, step = 0 } = {}) {
     const img = sheets[gender === 'f' ? 'f' : 'm'];
-    const drawn = drawSheetPose(img, pickPose(now, { selected, step }), px, py, shouldFlipLeft(step));
+    const pose = pickPose(now, { selected, step });
+    const drawn = drawSheetPose(img, pose, px, py, shouldFlipLeft(step));
 
-    // Fallback only while the image loads or if the path fails.
     if (!drawn) {
-      rect(Math.round(px - 16), Math.round(py - 48), 32, 48, gender === 'f' ? '#ef55a8' : '#ff1515');
+      ctx.save();
+      ctx.fillStyle = gender === 'f' ? '#ef55a8' : '#ff2020';
+      ctx.beginPath();
+      ctx.arc(px, py - 48, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
 
     if (selected && blink(now, 330)) {
-      rect(Math.round(px - 4), Math.round(py - 106), 8, 12, '#ffd400');
+      const h = img.naturalHeight ? img.naturalHeight / 4 : 256;
+      rect(Math.round(px - 4), Math.round(py - h * 0.82), 8, 12, '#ffd400');
     }
 
     void backpack;
