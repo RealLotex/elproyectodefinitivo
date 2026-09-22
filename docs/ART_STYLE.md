@@ -2,36 +2,69 @@
 
 ## Fuente visual canónica
 
-Los protagonistas deben usar **los sprites dibujados y aprobados para el proyecto**, no reconstrucciones procedurales.
+Los assets originales aprobados son la fuente de verdad del juego.
 
-Assets oficiales de runtime:
+### Protagonistas
 
-- `assets/sprites/nico_poses.png`
-- `assets/sprites/vera_poses.png`
+- `boy.png` — spritesheet masculino oficial.
+- `fem.png` — spritesheet femenino oficial.
+- `boyportrait.png` — retrato masculino oficial.
+- `fenportrait.png` — retrato femenino oficial.
 
-Cada archivo es un spritesheet de **4 × 4** con **16 poses**. Los assets de runtime son **256 × 256 px**, por lo que cada pose ocupa una celda de **64 × 64 px**.
+Los antiguos `assets/sprites/nico_poses.png` y `assets/sprites/vera_poses.png` quedan obsoletos para runtime y no deben volver a utilizarse como fuente del personaje.
 
-Los sprites enviados por el autor son la referencia visual de mayor autoridad.
+Los sheets de protagonista se interpretan como una grilla **4 × 4 / 16 poses**. El renderer obtiene el tamaño de celda directamente de la resolución original y dibuja desde el archivo completo, sin generar sprites reducidos intermedios.
 
-## Resolución y composición
+## Resolución y render
 
-- Resolución/viewport objetivo: **854 × 480 px**.
-- Sprites grandes y legibles; fondos densos; poca sensación de espacio vacío.
-- La composición debe recordar a un RPG 2D de la era GBA.
-- **No** aplicar `image-rendering: pixelated` / `crisp-edges` al canvas completo.
-- El aspecto GBA debe venir de la composición, cámara, paleta y escala, no de hacer visibles píxeles artificiales.
+El juego **no tiene una resolución raster fija baja**.
 
-## Stack gráfico
+`854 × 480` se conserva únicamente como **sistema de coordenadas de diseño** para no reescribir la lógica existente. No representa la resolución visual final.
 
-- Canvas 2D.
-- PNG transparentes.
-- Personajes mediante `drawImage` y recorte de la celda correspondiente.
-- Los frames de 64 × 64 se muestran aproximadamente a **92 px**.
-- `ctx.imageSmoothingEnabled = true` e `imageSmoothingQuality = 'high'` al escalar.
-- Prohibido reconstruir el cuerpo del protagonista con primitivas (`fillRect`, polígonos, etc.).
-- Las animaciones cambian entre poses reales del sheet.
+La resolución real del canvas debe ser:
 
-“Sin antialiasing” describe el **trazo de la ilustración fuente**, no una obligación de aplicar nearest-neighbour al canvas. El navegador no debe introducir un mosaico que no existe en el dibujo original.
+`ancho CSS × devicePixelRatio` por `alto CSS × devicePixelRatio`.
+
+Reglas obligatorias:
+
+- usar toda la resolución física disponible del dispositivo;
+- `ctx.imageSmoothingEnabled = true`;
+- `ctx.imageSmoothingQuality = 'high'`;
+- `image-rendering: auto`;
+- prohibido `pixelated`, `crisp-edges` y nearest-neighbour global;
+- prohibido reducir los sprites a 64/96/128 px para luego volver a ampliarlos;
+- usar siempre los PNG originales de mayor calidad disponibles;
+- los sprites pueden escalarse por composición/cámara, pero nunca pasar por un asset runtime degradado.
+
+## Composición
+
+La pantalla útil debe llenar todo el espacio disponible.
+
+### Desktop
+
+El viewport del juego ocupa toda la ventana. Los controles secundarios de navegador/juego pueden superponerse discretamente, pero no reservar bandas negras o marcos exteriores.
+
+### Mobile
+
+La pantalla se divide verticalmente en dos zonas:
+
+1. **viewport jugable flexible**, que ocupa todo el espacio restante;
+2. **mando táctil fijo abajo**, con cruceta, A/B, L/R y START.
+
+No debe existir espacio vacío entre ambos ni letterboxing impuesto por una resolución fija.
+
+## Lenguaje visual
+
+Se mantiene el dibujo 2D expresivo y hecho a mano de los protagonistas:
+
+- bordes negros irregulares;
+- formas caricaturescas;
+- colores planos y saturados;
+- siluetas simples y memorables;
+- estética deliberadamente dibujada, no vectorial;
+- nada de filtros que simulen baja resolución.
+
+La estética retro debe venir del **diseño**, no de degradar la imagen.
 
 ## Mapa de poses
 
@@ -54,32 +87,6 @@ Los sprites enviados por el autor son la referencia visual de mayor autoridad.
 | 14 | postura casual / inclinada |
 | 15 | relajado |
 
-## Estilo base
+## Consistencia
 
-- dibujo 2D deliberadamente hecho a mano;
-- estética MS Paint;
-- bordes negros puros (`#000000`), gruesos e irregulares;
-- pocos colores planos y saturados;
-- proporciones caricaturescas y siluetas imperfectas;
-- asimetrías deliberadas;
-- evitar gradientes, iluminación 3D y acabado vectorial limpio;
-- rasgos simples y expresivos;
-- ropa urbana cotidiana y poco heroica.
-
-## Protagonistas
-
-### Nico
-
-Buzo rojo, pantalón azul, zapatillas blancas con rojo, anteojos rectangulares grandes.
-
-### Vera
-
-Moño rosa, buzo rosa, pantalón violeta, zapatillas claras, anteojos rectangulares grandes. Sus poses no deben sentirse como un recolor de Nico.
-
-## Mochila y teclado
-
-Deben incorporarse como sprites dibujados en el mismo lenguaje visual o frames específicos del protagonista; no como primitivas limpias superpuestas.
-
-## Principio de consistencia
-
-Todo NPC, prop y escenario nuevo debe convivir visualmente con Nico y Vera sin parecer proveniente de otro juego.
+Todo asset nuevo —NPC, prop, escenario, UI o efecto— debe producirse en suficiente resolución para verse limpio en pantallas modernas y debe poder convivir con `boy.png` y `fem.png` sin parecer un asset reescalado o degradado.
